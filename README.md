@@ -3,7 +3,7 @@
 EnumReducerView is a Swift macro that generates a View declaration associated with a TCA enum Reducer.
 
 ## Usage
-The `EnumReducerView` macro currently assumes that you structure your child features like this:
+The `EnumReducerView` macro assumes that you structure your features such that each child feature defines a nested View type named after the reducer, with a "View" suffix:
 ```swift
 import SwiftUI
 import ComposableArchitecture
@@ -18,7 +18,7 @@ struct Feature {
 }
 ```
 
-To use the macro, apply it to the desired enum Reducer type together with the `@Reducer` macro.
+To use the macro, apply `@EnumReducerView` alongside `@Reducer` to the desired type:
 ```swift
 import SwiftUI
 import ComposableArchitecture
@@ -31,7 +31,7 @@ enum Home {
     case settings(Settings)
 }
 ```
-
+### Generated code
 The expansion in the example above results in the following code:
 ```swift
 import SwiftUI
