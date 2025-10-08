@@ -2,6 +2,7 @@ import SwiftCompilerPlugin
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
+import SwiftDiagnostics
 
 public struct EnumReducerViewMacro {}
 
@@ -15,14 +16,29 @@ extension EnumReducerViewMacro: ExtensionMacro {
     ) throws -> [ExtensionDeclSyntax] {
         guard
             let enumDecl = declaration.as(EnumDeclSyntax.self)
-        else { fatalError("EnumReducerView macro can only be applied on enum types.") }
+        else {
+            context.diagnose(
+                Diagnostic(
+                    node: declaration,
+                    message: MacroExpansionErrorMessage("EnumReducerView macro can only be applied to enum types")
+                )
+            )
+
+            return []
+        }
 
         let caseDecls = enumDecl.memberBlock.members.compactMap { $0.decl.as(EnumCaseDeclSyntax.self) }
         let caseElements = caseDecls.flatMap { $0.elements }
 
         var bodyContent: CodeBlockItemSyntax.Item
-
         if caseElements.isEmpty {
+            context.diagnose(
+                Diagnostic(
+                    node: Syntax(enumDecl.enumKeyword),
+                    message: MacroExpansionWarningMessage("Enum has no cases, emitting an EmptyView() in the View body")
+                )
+            )
+
             bodyContent = .expr(ExprSyntax(FunctionCallExprSyntax(callee: ExprSyntax("EmptyView"))))
         } else {
             let switchExpr = makeSwitchExpr(for: caseElements)
@@ -34,20 +50,47 @@ extension EnumReducerViewMacro: ExtensionMacro {
             CodeBlockItemSyntax(item: bodyContent)
         }
 
-        guard let bodyDecl else { return [] }
+        guard let bodyDecl else {
+            context.diagnose(
+                Diagnostic(
+                    node: declaration,
+                    message: MacroExpansionErrorMessage("Can't declare View body")
+                )
+            )
+
+            return []
+        }
 
         let viewStruct = try? StructDeclSyntax("public struct View: SwiftUI.View") {
             DeclSyntax("let store: Store<State, Action>")
             DeclSyntax(bodyDecl)
         }
 
-        guard let viewStruct else { return [] }
+        guard let viewStruct else {
+            context.diagnose(
+                Diagnostic(
+                    node: declaration,
+                    message: MacroExpansionErrorMessage("Can't declare View struct")
+                )
+            )
+
+            return []
+        }
 
         let viewInExtensionDecl = try? ExtensionDeclSyntax("extension \(type.trimmed)") {
             DeclSyntax(viewStruct)
         }
 
-        guard let viewInExtensionDecl else { return [] }
+        guard let viewInExtensionDecl else {
+            context.diagnose(
+                Diagnostic(
+                    node: declaration,
+                    message: MacroExpansionErrorMessage("Can't declare extension on \(type.trimmed)")
+                )
+            )
+
+            return []
+        }
 
         return [viewInExtensionDecl]
     }

@@ -2,6 +2,7 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
+import SwiftDiagnostics
 import XCTest
 
 // Macro implementations build for the host, so the corresponding module is not available when cross-compiling. Cross-compiled tests may still make use of the macro itself in end-to-end tests.
@@ -14,7 +15,7 @@ let testMacros: [String: Macro.Type] = [
 #endif
 
 final class EnumReducerViewTests: XCTestCase {
-    func testEnumReducerViewMacro() throws {
+    func testMacroOnEmptyEnum() throws {
         #if canImport(EnumReducerViewMacros)
         assertMacroExpansion(
             """
@@ -33,6 +34,14 @@ final class EnumReducerViewTests: XCTestCase {
                 }
             }
             """,
+            diagnostics: [
+                DiagnosticSpec(
+                    message: "Enum has no cases, emitting an EmptyView() in the View body",
+                    line: 2,
+                    column: 1,
+                    severity: .warning
+                )
+            ],
             macros: testMacros
         )
         #else
@@ -40,7 +49,7 @@ final class EnumReducerViewTests: XCTestCase {
         #endif
     }
 
-    func testEnumReducerViewMacroAdvanced() throws {
+    func testMacroOnEnumReducerWithOneCase() throws {
         #if canImport(EnumReducerViewMacros)
         assertMacroExpansion(
             """
