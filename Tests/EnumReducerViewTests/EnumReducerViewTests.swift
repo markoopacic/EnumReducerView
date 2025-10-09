@@ -25,7 +25,7 @@ final class EnumReducerViewTests: XCTestCase {
             enum TestFeature {}
             
             extension TestFeature {
-                public struct View: SwiftUI.View {
+                public struct TestFeatureView: SwiftUI.View {
                     let store: Store<State, Action>
                     public var body: some SwiftUI.View {
                         EmptyView()

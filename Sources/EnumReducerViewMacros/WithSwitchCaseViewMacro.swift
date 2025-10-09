@@ -61,7 +61,7 @@ extension WithSwitchCaseViewMacro: ExtensionMacro {
             return []
         }
 
-        let viewStruct = try? StructDeclSyntax("public struct View: SwiftUI.View") {
+        let viewStruct = try? StructDeclSyntax("public struct \(type.trimmed)View: SwiftUI.View") {
             DeclSyntax("let store: Store<State, Action>")
             DeclSyntax(bodyDecl)
         }
@@ -121,7 +121,7 @@ extension WithSwitchCaseViewMacro: ExtensionMacro {
                     callee: ExprSyntax(
                         MemberAccessExprSyntax(
                             base: ExprSyntax(stringLiteral: featureName),
-                            name: .identifier("\(featureName + "View")")))
+                            name: .identifier("\(featureName)View")))
                 ) {
                     LabeledExprListSyntax {
                         LabeledExprSyntax(
