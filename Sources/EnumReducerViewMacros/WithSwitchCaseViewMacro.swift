@@ -4,9 +4,9 @@ import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import SwiftDiagnostics
 
-public struct EnumReducerViewMacro {}
+public struct WithSwitchCaseViewMacro {}
 
-extension EnumReducerViewMacro: ExtensionMacro {
+extension WithSwitchCaseViewMacro: ExtensionMacro {
     public static func expansion(
         of node: AttributeSyntax,
         attachedTo declaration: some DeclGroupSyntax,
@@ -20,7 +20,7 @@ extension EnumReducerViewMacro: ExtensionMacro {
             context.diagnose(
                 Diagnostic(
                     node: declaration,
-                    message: MacroExpansionErrorMessage("EnumReducerView macro can only be applied to enum types")
+                    message: MacroExpansionErrorMessage("WithSwitchCaseView can only be applied to enum types")
                 )
             )
 
@@ -238,6 +238,6 @@ extension EnumReducerViewMacro: ExtensionMacro {
 @main
 struct EnumReducerViewPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
-        EnumReducerViewMacro.self
+        WithSwitchCaseViewMacro.self
     ]
 }

@@ -1,9 +1,9 @@
 # EnumReducerView
 
-EnumReducerView is a Swift macro that generates a View declaration associated with a TCA enum Reducer.
+WithSwitchCaseView is a Swift macro that generates a View declaration associated with a TCA enum Reducer.
 
 ## Usage
-The `EnumReducerView` macro assumes that you structure your features such that each child feature defines a nested View type named after the reducer, with a "View" suffix:
+The `WithSwitchCaseView` macro assumes that you structure your features such that each child feature defines a nested View type named after the reducer, with a "View" suffix:
 ```swift
 import SwiftUI
 import ComposableArchitecture
@@ -18,13 +18,13 @@ struct Feature {
 }
 ```
 
-To use the macro, apply `@EnumReducerView` alongside `@Reducer` to the desired type:
+To use the macro, apply `@WithSwitchCaseView` alongside `@Reducer` to the desired type:
 ```swift
 import SwiftUI
 import ComposableArchitecture
 import EnumReducerView
 
-@EnumReducerView
+@WithSwitchCaseView
 @Reducer(state: .equatable)
 enum Home {
     case details(Details)

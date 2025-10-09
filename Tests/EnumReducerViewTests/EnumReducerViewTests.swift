@@ -9,7 +9,7 @@ import XCTest
 import EnumReducerViewMacros
 
 let testMacros: [String: Macro.Type] = [
-    "EnumReducerView": EnumReducerViewMacro.self,
+    "WithSwitchCaseView": WithSwitchCaseViewMacro.self,
 ]
 #endif
 
@@ -18,7 +18,7 @@ final class EnumReducerViewTests: XCTestCase {
         #if canImport(EnumReducerViewMacros)
         assertMacroExpansion(
             """
-            @EnumReducerView
+            @WithSwitchCaseView
             enum TestFeature {}
             """,
             expandedSource: """
@@ -93,7 +93,7 @@ final class EnumReducerViewTests: XCTestCase {
             }
 
             extension TestFeature {
-                @EnumReducerView
+                @WithSwitchCaseView
                 enum TestSheet: Reducer {
                     case details(DetailsFeature)
 

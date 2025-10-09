@@ -10,9 +10,9 @@
 /// }
 /// ```
 ///
-/// Apply `@EnumReducerView` alongside `@Reducer` on your enum reducer:
+/// Apply `@WithSwitchCaseView` alongside `@Reducer` on your enum reducer:
 /// ```swift
-/// @EnumReducerView
+/// @WithSwitchCaseView
 /// @Reducer(state: .equatable)
 /// enum Home {
 ///   case details(Details)
@@ -22,4 +22,4 @@
 ///
 /// The macro expands to a `Home.View` that displays the appropriate child view for each case, scoped via its reducer.
 @attached(extension, names: named(View))
-public macro EnumReducerView() = #externalMacro(module: "EnumReducerViewMacros", type: "EnumReducerViewMacro")
+public macro WithSwitchCaseView() = #externalMacro(module: "EnumReducerViewMacros", type: "WithSwitchCaseViewMacro")
