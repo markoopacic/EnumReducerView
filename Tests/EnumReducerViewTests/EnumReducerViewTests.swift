@@ -7,6 +7,7 @@ import XCTest
 
 #if canImport(EnumReducerViewMacros)
 import EnumReducerViewMacros
+import ComposableArchitecture
 
 let testMacros: [String: Macro.Type] = [
     "WithSwitchCaseView": WithSwitchCaseViewMacro.self,
@@ -19,9 +20,11 @@ final class EnumReducerViewTests: XCTestCase {
         assertMacroExpansion(
             """
             @WithSwitchCaseView
+            @Reducer
             enum TestFeature {}
             """,
             expandedSource: """
+            @Reducer
             enum TestFeature {}
             
             extension TestFeature {
@@ -36,7 +39,7 @@ final class EnumReducerViewTests: XCTestCase {
             diagnostics: [
                 DiagnosticSpec(
                     message: "Enum has no cases, emitting an EmptyView() in the View body",
-                    line: 2,
+                    line: 3,
                     column: 1,
                     severity: .warning
                 )
@@ -53,115 +56,41 @@ final class EnumReducerViewTests: XCTestCase {
         assertMacroExpansion(
             """
             import SwiftUI
+            import ComposableArchitecture
 
-            protocol Reducer: Sendable {
-                associatedtype State
-                associatedtype Action
-            }
-
-            class Store<State, Action> {
-                var state: State
-
-                init(initialState: State) {
-                    self.state = initialState
-                }
-            }
-
-            struct TestFeature: Reducer {
-                struct State {
-                    var prop: Int = 0
-                }
-
-                enum Action {
-                    case action
-                }
-
-                struct TestFeatureView {}
-            }
-
-            struct DetailsFeature: Reducer {
-                struct DetailsFeatureView {
-                    let store: Store<State, Action>
-                }
-
-                struct State {
-                    var detail: Int = 0
-                }
-                enum Action {
-                    case detailAction
-                }
-            }
+            @Reducer
+            struct DetailsFeature {}
+            
+            @Reducer
+            struct TestFeature {}
 
             extension TestFeature {
                 @WithSwitchCaseView
-                enum TestSheet: Reducer {
+                @Reducer
+                enum TestSheet {
                     case details(DetailsFeature)
-
-                    struct State {
-                        var sheet: Int = 0
-                    }
-                    enum Action {
-                        case sheetAction
-                    }
                 }
             }
             """,
             expandedSource: """
             import SwiftUI
+            import ComposableArchitecture
 
-            protocol Reducer: Sendable {
-                associatedtype State
-                associatedtype Action
-            }
-
-            class Store<State, Action> {
-                var state: State
-
-                init(initialState: State) {
-                    self.state = initialState
-                }
-            }
-
-            struct TestFeature: Reducer {
-                struct State {
-                    var prop: Int = 0
-                }
-
-                enum Action {
-                    case action
-                }
-
-                struct TestFeatureView {}
-            }
-
-            struct DetailsFeature: Reducer {
-                struct DetailsFeatureView {
-                    let store: Store<State, Action>
-                }
-
-                struct State {
-                    var detail: Int = 0
-                }
-                enum Action {
-                    case detailAction
-                }
-            }
+            @Reducer
+            struct DetailsFeature {}
+            
+            @Reducer
+            struct TestFeature {}
 
             extension TestFeature {
-                enum TestSheet: Reducer {
+                @Reducer
+                enum TestSheet {
                     case details(DetailsFeature)
-
-                    struct State {
-                        var sheet: Int = 0
-                    }
-                    enum Action {
-                        case sheetAction
-                    }
                 }
             }
 
             extension TestFeature.TestSheet {
-                public struct View: SwiftUI.View {
+                public struct TestSheetView: SwiftUI.View {
                     let store: Store<State, Action>
                     public var body: some SwiftUI.View {
                         switch store.state {

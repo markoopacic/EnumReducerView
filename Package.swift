@@ -20,7 +20,8 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "601.0.0-latest")
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "601.0.0-latest"),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", .upToNextMajor(from: "1.17.1"))
     ],
     targets: [
         .macro(
@@ -39,6 +40,7 @@ let package = Package(
             dependencies: [
                 "EnumReducerViewMacros",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ]
         ),
     ]

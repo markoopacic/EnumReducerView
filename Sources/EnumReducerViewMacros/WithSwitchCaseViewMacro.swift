@@ -46,53 +46,43 @@ extension WithSwitchCaseViewMacro: ExtensionMacro {
             bodyContent = .expr(ExprSyntax(switchExpr))
         }
 
-        let bodyDecl = try? VariableDeclSyntax("public var body: some SwiftUI.View") {
-            CodeBlockItemSyntax(item: bodyContent)
-        }
-
-        guard let bodyDecl else {
-            context.diagnose(
-                Diagnostic(
-                    node: declaration,
-                    message: MacroExpansionErrorMessage("Can't declare View body")
-                )
+        let bodyDecl = VariableDeclSyntax(
+            modifiers: DeclModifierListSyntax {
+                DeclModifierSyntax(name: .keyword(.public))
+            },
+            .var,
+            name: PatternSyntax(stringLiteral: "body"),
+            type: TypeAnnotationSyntax(type: TypeSyntax(stringLiteral: "some SwiftUI.View")),
+            accessorBlock: AccessorBlockSyntax(
+                accessors: .getter(CodeBlockItemListSyntax {
+                    CodeBlockItemSyntax(item: bodyContent)
+                })
             )
+        )
 
-            return []
-        }
+        let baseTypeName = String(type.trimmedDescription.split(separator: ".").last ?? "")
+        let viewName = baseTypeName + "View"
 
-        let viewStruct = try? StructDeclSyntax("public struct \(type.trimmed)View: SwiftUI.View") {
+        let viewStructDecl = StructDeclSyntax(
+            modifiers: DeclModifierListSyntax {
+                DeclModifierSyntax(name: .keyword(.public))
+            },
+            name: TokenSyntax(stringLiteral: viewName),
+            inheritanceClause: InheritanceClauseSyntax(
+                inheritedTypes: InheritedTypeListSyntax {
+                    InheritedTypeSyntax(type: TypeSyntax(stringLiteral: "SwiftUI.View"))
+                }
+            )
+        ) {
             DeclSyntax("let store: Store<State, Action>")
             DeclSyntax(bodyDecl)
         }
 
-        guard let viewStruct else {
-            context.diagnose(
-                Diagnostic(
-                    node: declaration,
-                    message: MacroExpansionErrorMessage("Can't declare View struct")
-                )
-            )
-
-            return []
+        let extensionDecl = ExtensionDeclSyntax(extendedType: type) {
+            DeclSyntax(viewStructDecl)
         }
 
-        let viewInExtensionDecl = try? ExtensionDeclSyntax("extension \(type.trimmed)") {
-            DeclSyntax(viewStruct)
-        }
-
-        guard let viewInExtensionDecl else {
-            context.diagnose(
-                Diagnostic(
-                    node: declaration,
-                    message: MacroExpansionErrorMessage("Can't declare extension on \(type.trimmed)")
-                )
-            )
-
-            return []
-        }
-
-        return [viewInExtensionDecl]
+        return [extensionDecl]
     }
 
     private static func makeSwitchExpr(for elements: [EnumCaseElementSyntax]) -> SwitchExprSyntax {
