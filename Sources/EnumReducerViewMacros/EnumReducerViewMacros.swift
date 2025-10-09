@@ -4,9 +4,14 @@ import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import SwiftDiagnostics
 
-public struct WithSwitchCaseViewMacro {}
+@main
+struct EnumReducerViewPlugin: CompilerPlugin {
+    let providingMacros: [Macro.Type] = [
+        WithSwitchCaseViewMacro.self
+    ]
+}
 
-extension WithSwitchCaseViewMacro: ExtensionMacro {
+public struct WithSwitchCaseViewMacro: ExtensionMacro {
     public static func expansion(
         of node: AttributeSyntax,
         attachedTo declaration: some DeclGroupSyntax,
@@ -223,11 +228,4 @@ extension WithSwitchCaseViewMacro: ExtensionMacro {
 
         return switchExpr
     }
-}
-
-@main
-struct EnumReducerViewPlugin: CompilerPlugin {
-    let providingMacros: [Macro.Type] = [
-        WithSwitchCaseViewMacro.self
-    ]
 }
