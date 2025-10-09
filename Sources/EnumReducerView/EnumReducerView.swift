@@ -1,4 +1,4 @@
-/// Generates a SwiftUI `View` nested in an extension on the type to which it is applied.
+/// Generates a SwiftUI `View` for a TCA enum Reducer.
 /// The generated `View` is declared in an extension on the type to which it is applied.
 /// Can only be applied to enum Reducer types.
 ///
