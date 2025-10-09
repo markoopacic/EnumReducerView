@@ -5,8 +5,8 @@ import SwiftSyntaxMacrosTestSupport
 import SwiftDiagnostics
 import XCTest
 
-#if canImport(EnumReducerViewMacros)
-import EnumReducerViewMacros
+#if canImport(TCASwitchCaseViewMacros)
+import TCASwitchCaseViewMacros
 import ComposableArchitecture
 
 let testMacros: [String: Macro.Type] = [
@@ -14,9 +14,9 @@ let testMacros: [String: Macro.Type] = [
 ]
 #endif
 
-final class EnumReducerViewTests: XCTestCase {
+final class TCASwitchCaseViewTests: XCTestCase {
     func testMacroOnEmptyEnum() throws {
-        #if canImport(EnumReducerViewMacros)
+        #if canImport(TCASwitchCaseViewMacros)
         assertMacroExpansion(
             """
             @WithSwitchCaseView
@@ -52,7 +52,7 @@ final class EnumReducerViewTests: XCTestCase {
     }
 
     func testMacroOnEnumReducerWithOneCase() throws {
-        #if canImport(EnumReducerViewMacros)
+        #if canImport(TCASwitchCaseViewMacros)
         assertMacroExpansion(
             """
             import SwiftUI

@@ -1,4 +1,4 @@
-# EnumReducerView
+# TCASwitchCaseView
 
 WithSwitchCaseView is a Swift macro that generates a View declaration associated with a TCA enum Reducer.
 
@@ -22,7 +22,7 @@ To use the macro, apply `@WithSwitchCaseView` alongside `@Reducer` to the desire
 ```swift
 import SwiftUI
 import ComposableArchitecture
-import EnumReducerView
+import TCASwitchCaseView
 
 @WithSwitchCaseView
 @Reducer(state: .equatable)
@@ -36,7 +36,7 @@ The expansion in the example above results in the following code:
 ```swift
 import SwiftUI
 import ComposableArchitecture
-import EnumReducerView
+import TCASwitchCaseView
 
 @Reducer(state: .equatable)
 enum Home {

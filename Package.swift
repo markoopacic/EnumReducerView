@@ -5,7 +5,7 @@ import PackageDescription
 import CompilerPluginSupport
 
 let package = Package(
-    name: "EnumReducerView",
+    name: "TCASwitchCaseView",
     platforms: [
         .macOS(.v10_15),
         .iOS(.v13),
@@ -15,8 +15,8 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "EnumReducerView",
-            targets: ["EnumReducerView"]
+            name: "TCASwitchCaseView",
+            targets: ["TCASwitchCaseView"]
         )
     ],
     dependencies: [
@@ -25,20 +25,20 @@ let package = Package(
     ],
     targets: [
         .macro(
-            name: "EnumReducerViewMacros",
+            name: "TCASwitchCaseViewMacros",
             dependencies: [
                 .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
                 .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
             ]
         ),
         .target(
-            name: "EnumReducerView",
-            dependencies: ["EnumReducerViewMacros"]
+            name: "TCASwitchCaseView",
+            dependencies: ["TCASwitchCaseViewMacros"]
         ),
         .testTarget(
-            name: "EnumReducerViewTests",
+            name: "TCASwitchCaseViewTests",
             dependencies: [
-                "EnumReducerViewMacros",
+                "TCASwitchCaseViewMacros",
                 .product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ]

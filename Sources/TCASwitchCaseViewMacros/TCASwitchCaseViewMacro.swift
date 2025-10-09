@@ -5,7 +5,7 @@ import SwiftSyntaxMacros
 import SwiftDiagnostics
 
 @main
-struct EnumReducerViewPlugin: CompilerPlugin {
+struct TCASwitchCaseViewPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         WithSwitchCaseViewMacro.self
     ]

@@ -40,4 +40,4 @@
 /// }
 /// ```
 @attached(extension, names: named(View))
-public macro WithSwitchCaseView() = #externalMacro(module: "EnumReducerViewMacros", type: "WithSwitchCaseViewMacro")
+public macro WithSwitchCaseView() = #externalMacro(module: "TCASwitchCaseViewMacros", type: "WithSwitchCaseViewMacro")
