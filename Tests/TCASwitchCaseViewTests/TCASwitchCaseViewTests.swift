@@ -21,14 +21,14 @@ final class TCASwitchCaseViewTests: XCTestCase {
             """
             @WithSwitchCaseView
             @Reducer
-            enum TestFeature {}
+            enum Home {}
             """,
             expandedSource: """
             @Reducer
-            enum TestFeature {}
+            enum Home {}
             
-            extension TestFeature {
-                public struct TestFeatureView: SwiftUI.View {
+            extension Home {
+                public struct HomeView: SwiftUI.View {
                     let store: Store<State, Action>
                     public var body: some SwiftUI.View {
                         EmptyView()
@@ -59,17 +59,12 @@ final class TCASwitchCaseViewTests: XCTestCase {
             import ComposableArchitecture
 
             @Reducer
-            struct DetailsFeature {}
-            
-            @Reducer
-            struct TestFeature {}
+            struct Details {}
 
-            extension TestFeature {
-                @WithSwitchCaseView
-                @Reducer
-                enum TestSheet {
-                    case details(DetailsFeature)
-                }
+            @WithSwitchCaseView
+            @Reducer
+            enum Home {
+                case details(Details)
             }
             """,
             expandedSource: """
@@ -77,26 +72,20 @@ final class TCASwitchCaseViewTests: XCTestCase {
             import ComposableArchitecture
 
             @Reducer
-            struct DetailsFeature {}
-            
+            struct Details {}
             @Reducer
-            struct TestFeature {}
-
-            extension TestFeature {
-                @Reducer
-                enum TestSheet {
-                    case details(DetailsFeature)
-                }
+            enum Home {
+                case details(Details)
             }
 
-            extension TestFeature.TestSheet {
-                public struct TestSheetView: SwiftUI.View {
+            extension Home {
+                public struct HomeView: SwiftUI.View {
                     let store: Store<State, Action>
                     public var body: some SwiftUI.View {
                         switch store.state {
                         case .details:
                             if let store = store.scope(state: \\.details, action: \\.details) {
-                                DetailsFeature.DetailsFeatureView(store: store)
+                                Details.DetailsView(store: store)
                             }
                         }
                     }
@@ -110,4 +99,138 @@ final class TCASwitchCaseViewTests: XCTestCase {
         throw XCTSkip("macros are only supported when running tests for the host platform")
         #endif
     }
+
+    func testMacroOnEnumReducerWithTwoCases() throws {
+        #if canImport(TCASwitchCaseViewMacros)
+        assertMacroExpansion(
+            """
+            import SwiftUI
+            import ComposableArchitecture
+            
+            @Reducer
+            struct Details {}
+            
+            @Reducer
+            struct Settings {}
+            
+            @WithSwitchCaseView
+            @Reducer
+            enum Home {
+                case details(Details)
+                case settings(Settings)
+            }
+            """,
+            expandedSource: """
+            import SwiftUI
+            import ComposableArchitecture
+            
+            @Reducer
+            struct Details {}
+            
+            @Reducer
+            struct Settings {}
+            @Reducer
+            enum Home {
+                case details(Details)
+                case settings(Settings)
+            }
+            
+            extension Home {
+                public struct HomeView: SwiftUI.View {
+                    let store: Store<State, Action>
+                    public var body: some SwiftUI.View {
+                        switch store.state {
+                        case .details:
+                            if let store = store.scope(state: \\.details, action: \\.details) {
+                                Details.DetailsView(store: store)
+                            }
+                        case .settings:
+                            if let store = store.scope(state: \\.settings, action: \\.settings) {
+                                Settings.SettingsView(store: store)
+                            }
+                        }
+                    }
+                }
+            }
+
+            """,
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+
+    func testMacroOnNestedEnumReducerWithTwoCases() throws {
+        #if canImport(TCASwitchCaseViewMacros)
+        assertMacroExpansion(
+            """
+            import SwiftUI
+            import ComposableArchitecture
+
+            @Reducer
+            struct Details {}
+            
+            @Reducer
+            struct Settings {}
+            
+            @Reducer
+            struct Home {}
+
+            extension Home {
+                @WithSwitchCaseView
+                @Reducer
+                enum Sheet {
+                    case details(Details)
+                    case settings(Settings)
+                }
+            }
+            """,
+            expandedSource: """
+            import SwiftUI
+            import ComposableArchitecture
+
+            @Reducer
+            struct Details {}
+            
+            @Reducer
+            struct Settings {}
+            
+            @Reducer
+            struct Home {}
+
+            extension Home {
+                @Reducer
+                enum Sheet {
+                    case details(Details)
+                    case settings(Settings)
+                }
+            }
+
+            extension Home.Sheet {
+                public struct SheetView: SwiftUI.View {
+                    let store: Store<State, Action>
+                    public var body: some SwiftUI.View {
+                        switch store.state {
+                        case .details:
+                            if let store = store.scope(state: \\.details, action: \\.details) {
+                                Details.DetailsView(store: store)
+                            }
+                        case .settings:
+                            if let store = store.scope(state: \\.settings, action: \\.settings) {
+                                Settings.SettingsView(store: store)
+                            }
+                        }
+                    }
+                }
+            }
+
+            """,
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
+
 }
