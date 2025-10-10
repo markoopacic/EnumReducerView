@@ -39,5 +39,5 @@
 ///     }
 /// }
 /// ```
-@attached(extension, names: named(View))
+@attached(extension, names: arbitrary)
 public macro WithSwitchCaseView() = #externalMacro(module: "TCASwitchCaseViewMacros", type: "WithSwitchCaseViewMacro")
